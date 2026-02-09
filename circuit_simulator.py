@@ -170,3 +170,20 @@ class CircuitSimulator:
 
         print(f"Number of iterations: {iter}.")
         return R_pred, C_pred, cost
+    
+    def get_jac(x, Is=1e-13, Vt=0.025):
+        
+        V2 = x[1]
+        V3 = x[2]
+        
+        #Derivative of the diode current with respect to V2 or V3
+        g = (Is / Vt) * np.exp((V2 - V3) / Vt)
+        
+        J = np.zeros((4, 4))
+        
+        J[1, 1] = g
+        J[1, 2] = -g  
+        J[2, 1] = -g  
+        J[2, 2] = g   
+        
+        return J
