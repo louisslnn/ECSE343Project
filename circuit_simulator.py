@@ -14,10 +14,13 @@ class CircuitSimulator:
         # Initialize the MNA parameters
         self.amplitude = amplitude
         self.f = frequency
+        self.Is = 1e-13
+        self.Vt = 0.025
         self.R_test = R_test
         self.C_test = C_test
         self.G_mat = self.get_G(self.R_test)
         self.C_mat = self.get_C(self.C_test)
+
     def get_G(self, R):
         # Conductance matrix (G) representing static components (resistors/source connections)
         G_mat = np.array([
@@ -79,12 +82,25 @@ class CircuitSimulator:
 
     def get_jac(self,x):
         # Jacobian of the non-linear element vector for Newton-Raphson solver
-        """ YOUR CODE HERE:
-        jac = ...
-        """
-        jac = 0
+        _, V2, V3, _ = x
+
+        exp_term = np.exp((V2-V3) / self.Vt)
+        dId_dV2 = (self.Is / self.Vt) * exp_term
+        dId_dV3 = -(self.Is / self.Vt) * exp_term
+
+        jac = np.zeros((4, 4))
+
+        jac[1, 1] = dId_dV2
+        jac[1, 2] = dId_dV3
+
+        jac[2, 1] = -dId_dV2
+        jac[2, 2] = -dId_dV3
+
         return jac
     
+    def get_Id(self, V2, V3):
+        return self.Is * (np.exp((V2 - V3) / self.Vt) - 1)
+
     def BEuler(self, x_0, delta_t, T, noise = False):
         # Get the G and C matrices
         G = self.G_mat
@@ -111,30 +127,53 @@ class CircuitSimulator:
         tpoints = np.array(tpoints)
         return y, tpoints
 
-    def NewtonRaphson(self, A, b, x, epsilon):
+    def NewtonRaphson(self, A, b, x, max_iter=100, epsilon=1e-6):
         # Iterative solver for non-linear systems
-        """ YOUR CODE HERE:
-        x = ...
-        """
+        it = 0
+
+        while it < max_iter:
+            F = A @ x + self.get_f_vect(x) - b
+
+            if np.linalg.norm(F) < epsilon:
+                break
+
+            jacob = A + self.get_jac(x)
+            delta_x = np.linalg.solve(jacob, -F)
+
+            x = x + delta_x
+            it += 1
+
         return x
+    
     def getSensitivities(self, x_pred, G_mat, C_mat, R, delta_t):
         # Calculates sensitivity of nodal voltages (x) to parameters R and C
         dxdr = []
+        dxdc = []
+
+        dGdR = self.get_dGdR(R)
+        dCdC = self.get_dCdC()
+
         for i in range(len(x_pred)):
             jac = self.get_jac(x_pred[i])
-            dGdR = self.get_dGdR(R)
-            if(i == 0):
+            A = G_mat + C_mat/delta_t + jac
+
+            if i == 0:
                 # Initial sensitivity calculation
                 tempr = -dGdR@x_pred[i]
             else:
                 # Propagation of sensitivity through time steps
                 tempr = -dGdR@x_pred[i] + (C_mat/delta_t)@dxdr[i-1]
-
-            A = G_mat + C_mat/delta_t + jac
             dxdr.append(np.linalg.solve(A,tempr))
-            """ YOUR CODE HERE:
-            dxdc = ...
-            """
+
+            if i == 0:
+                tempc = -(dCdC / delta_t) @ x_pred[i]
+            else:
+                tempc = (
+                    -(dCdC / delta_t) @ (x_pred[i] - x_pred[i-1])
+                    + (C_mat / delta_t) @ dxdc[i-1]
+                )
+            dxdc.append(np.linalg.solve(A, tempc))
+
         dxdr = np.array(dxdr)
         dxdc = np.array(dxdc)
         return dxdr, dxdc

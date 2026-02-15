@@ -1,6 +1,6 @@
 import numpy as np
-from ECSE343Project.circuit_simulator import CircuitSimulator
-from ECSE343Project.helper_functions import plot_data, create_dataset, save_dataset
+from circuit_simulator import CircuitSimulator
+from helper_functions import plot_data, create_dataset, save_dataset
 
 # ==========================================
 # 1. Simulation Parameters & Constants

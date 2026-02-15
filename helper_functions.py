@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from ECSE343Project.circuit_simulator import CircuitSimulator
+from circuit_simulator import CircuitSimulator
 import random as rd
 import pickle
 
@@ -58,6 +58,8 @@ def create_dataset(num_samples, amplitude, f, delta_t, T, noise):
         """ YOUR CODE HERE:
         R, C = ...
         """
+
+        R, C = 0,0
 
         # Initialize the Modified Nodal Analysis (MNA) simulator with current parameters
         mna = CircuitSimulator(amplitude, f, R, C)

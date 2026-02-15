@@ -3,17 +3,17 @@
 ## 🗓️ Week 1 — Circuit Simulator Foundations
 **Goal:** Time-domain simulation works and is stable
 
-- [ ] Read project statement fully (once, no overthinking)
-- [ ] Implement `getG(R)`
-- [ ] Implement `getC(C)`
-- [ ] Implement diode current `ID(V2, V3)`
-- [ ] Derive Jacobian `df/dx`
-- [ ] Implement `get_jac()` function
-- [ ] Implement Newton–Raphson solver
-- [ ] Implement Backward Euler (`BEuler`)
-- [ ] Test with arbitrary R, C
-- [ ] Plot V1, V2, V3, IE vs time
-- [ ] Sanity check: V3 is rectified
+- [x] Read project statement fully (once, no overthinking)
+- [x] Implement `getG(R)`
+- [x] Implement `getC(C)`
+- [x] Implement diode current `ID(V2, V3)`
+- [x] Derive Jacobian `df/dx`
+- [x] Implement `get_jac()` function
+- [x] Implement Newton–Raphson solver
+- [x] Implement Backward Euler (`BEuler`)
+- [x] Test with arbitrary R, C
+- [x] Plot V1, V2, V3, IE vs time
+- [x] Sanity check: V3 is rectified
 
 ---
 
