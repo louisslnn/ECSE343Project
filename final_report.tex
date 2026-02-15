@@ -1,0 +1,82 @@
+\documentclass[journal,twocolumn]{IEEEtran}
+\usepackage{amsmath, amssymb, graphicx, algorithm, algorithmic, hyperref}
+
+\title{Data-Driven and Numerical Estimation of Circuit Parameters in a Half-Wave Rectifier}
+\author{Group 32: [Your Names Here]\\ Department of Electrical and Computer Engineering, McGill University}
+\markboth{ECSE 343: Numerical Methods in Engineering, Winter 2026}{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report details the estimation of unknown resistance ($R$) and capacitance ($C$) values in a half-wave rectifier circuit[cite: 268]. We implement a physics-based simulator using the Backward Euler method and Newton-Raphson iteration[cite: 102, 112]. Two primary estimation methods are compared: the classical Gauss-Newton non-linear least-squares algorithm and a supervised learning approach using models such as Random Forest and MLP[cite: 124, 294]. Our results compare the robustness, accuracy, and efficiency of both methodologies[cite: 301].
+\end{abstract}
+
+\section{Introduction}
+Estimating circuit parameters is a fundamental inverse problem[cite: 273]. We are tasked with identifying $R \in [1\Omega, 2.5k\Omega]$ and $C \in [0.1\mu F, 5\mu F]$ from noisy time-domain measurements of $V_1, V_2, V_3$, and $I_E$[cite: 11, 281]. This report covers the derivation of the circuit's sensitivity, the implementation of a numerical simulator, and a comparative analysis of data-driven models[cite: 173, 201].
+
+\section{Circuit Simulation and Numerical Analysis}
+\subsection{Modified Nodal Analysis (MNA)}
+The circuit dynamics are described by the compact MNA form[cite: 97]:
+$$Gx(t) + C\dot{x}(t) + f(x(t)) = b(t)$$
+Using Backward Euler discretization[cite: 106]:
+$$\Psi(x_t) = (G + \frac{1}{\Delta t}C)x_t + f(x_t) - (b_t + \frac{1}{\Delta t}Cx_{t-1}) = 0$$
+
+\subsection{Newton-Raphson and Jacobian Derivation}
+To solve the non-linear system at each time step, we require the Jacobian $J_t = \frac{\partial f(x_t)}{\partial x_t}$[cite: 144]. 
+% TODO: Insert your derivation of the Jacobian here[cite: 176, 240].
+\begin{algorithm}
+\caption{Newton-Raphson for Circuit Simulation}
+\begin{algorithmic}[1]
+% TODO: Implement pseudo-code as per task 3.1.1b[cite: 177, 240].
+\end{algorithmic}
+\end{algorithm}
+
+\section{Classical Parameter Estimation}
+\subsection{Gauss-Newton Method}
+The Gauss-Newton algorithm iteratively updates $R$ and $C$ guesses using the residual $r = (X_{true} - X_{pred})$[cite: 124, 129].
+
+\subsection{Sensitivity Analysis}
+A core requirement is the derivation of sensitivities $\frac{\partial X}{\partial R}$ and $\frac{\partial X}{\partial C}$[cite: 139, 183].
+% TODO: Insert derivation for partial X / partial C here[cite: 183, 240].
+\begin{algorithm}
+\caption{getSensitivities Function}
+\begin{algorithmic}[1]
+% TODO: Implement pseudo-code as per task 3.1.3b[cite: 182, 240].
+\end{algorithmic}
+\end{algorithm}
+
+\section{Machine Learning Approach}
+\subsection{Dataset Generation}
+We generated a dataset $\mathcal{D} = \{X_i, y_i\}_{i=1}^N$ by sampling $R$ and $C$ uniformly within the specified ranges[cite: 157, 281]. We included both clean and noisy data to improve generalization[cite: 165, 286].
+
+\subsection{Model Architectures and Preprocessing}
+As proposed, we evaluated the following models[cite: 294]:
+\begin{itemize}
+    \item \textbf{Linear/Ridge Regression}: Baseline for linear relationships[cite: 296].
+    \item \textbf{Random Forest}: To capture non-linearities and handle noise[cite: 297].
+    \item \textbf{SVR}: For high-dimensional robustness[cite: 298].
+    \item \textbf{MLP}: For complex non-linear mapping[cite: 299].
+\end{itemize}
+Data was normalized to zero mean and unit variance[cite: 290].
+
+\section{Results and Discussion}
+\subsection{Simulation Accuracy}
+% TODO: Plot V1, V2, V3, IE vs Time (Task 3.1.2)[cite: 178].
+\subsection{Gauss-Newton Performance}
+% TODO: Plot V3 predicted vs V3 true (Task 3.1.4)[cite: 189].
+\subsection{Supervised Learning Comparison}
+% TODO: Compare MSE, training time, and noise robustness (Task 3.2.2/3.2.3)[cite: 200, 302].
+
+\section{Conclusion}
+% TODO: Final discussion on when to use ML vs. Gauss-Newton[cite: 203, 251].
+
+\section*{Member Contributions}
+% TODO: List team member roles (Task 5d)[cite: 251].
+
+\begin{thebibliography}{1}
+\bibitem{nocedal} J. Nocedal, ``Numerical optimization,'' Springer, 2006[cite: 261].
+\end{thebibliography}
+
+\end{document}
