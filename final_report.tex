@@ -55,6 +55,14 @@ To solve the non-linear system at each time step, we require the Jacobian $J_t =
 \end{algorithmic}
 \end{algorithm}
 
+\begin{figure}[h] 
+    \centering 
+    \includegraphics[width=0.5\textwidth]{image2.png} 
+    \caption{V3 with respect to time of the circuit with Rpred = 986.0115
+and Cpred = 1.53e-06 superposed with the true voltage of node V3 from}
+    \label{fig:ma_photo} 
+\end{figure}
+
 \section{Classical Parameter Estimation}
 \subsection{Gauss-Newton Method}
 The Gauss-Newton algorithm iteratively updates $R$ and $C$ guesses using the residual $r = (X_{true} - X_{pred})$[cite: 124, 129].
@@ -68,6 +76,12 @@ A core requirement is the derivation of sensitivities $\frac{\partial X}{\partia
 \STATE % TODO: Implement pseudo-code as per task 3.1.3b[cite: 182, 240].
 \end{algorithmic}
 \end{algorithm}
+
+\begin{figure}[h] 
+    \centering %
+    \includegraphics[width=0.5\textwidth]{image.png} 
+    \caption{ Voltages of nodes V1, V2, V3, and current IE with respect to time for R = 2500 $\Omega$ and C = 3 $\mu$F }
+\end{figure}
 
 \section{Machine Learning Approach}
 \subsection{Dataset Generation}
