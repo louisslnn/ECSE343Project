@@ -1,5 +1,5 @@
 \documentclass[journal,twocolumn]{IEEEtran}
-\usepackage{amsmath, amssymb, graphicx, algorithm, algpseudocode, hyperref}
+\usepackage{amsmath, amssymb, graphicx, algorithm, algorithmic, hyperref,algpseudocode}
 
 \title{Data-Driven and Numerical Estimation of Circuit Parameters in a Half-Wave Rectifier}
 \author{Group 32: [Your Names Here]\\ Department of Electrical and Computer Engineering, McGill University}
@@ -36,7 +36,7 @@ $$J = \frac{\partial f}{\partial x} = \begin{bmatrix}
 \section{Deriving the Jacobian of the sensitivities for algorithm 2}
 
 To derive the Jacobian of the sensitivities for algorithm 2, we first need to define the sensitivity functions with respect to the parameters $R$ and $C$. Let $S_R = \frac{\partial X}{\partial R}$ and $S_C = \frac{\partial X}{\partial C}$ represent the sensitivities of the state vector $X$ with respect to $R$ and $C$, respectively.
-The circuit's governing equation at each timestep looks like $(G + C/\Delta t + J) x = b$ where J is the Jacobian. Differentiating this system with respect to a parameter p gives $A(dx/dp) = -( dA/dp * x ) + (C/Δt) * (dx/dp)$. The code is the following.
+The circuit's governing equation at each timestep looks like $(G + C/Δt + J) x = b$ where J is the Jacobian. Differentiating this system with respect to a parameter p gives $A(dx/dp) = -( dA/dp * x ) + (C/Δt) * (dx/dp)$.
 
 \section{Circuit Simulation and Numerical Analysis}
 \subsection{Modified Nodal Analysis (MNA)}
@@ -46,20 +46,52 @@ Using Backward Euler discretization[cite: 106]:
 $$\Psi(x_t) = (G + \frac{1}{\Delta t}C)x_t + f(x_t) - (b_t + \frac{1}{\Delta t}Cx_{t-1}) = 0$$
 
 \subsection{Newton-Raphson and Jacobian Derivation}
-To solve the non-linear system at each time step, we require the Jacobian $J_t = \frac{\partial f(x_t)}{\partial x_t}$[cite: 144]. 
-% TODO: Insert your derivation of the Jacobian here[cite: 176, 240].
+To solve the non-linear system at each time step, we require the Jacobian $J_t = \frac{\partial f(x_t)}{\partial x_t}$. 
+
+% TODO: Insert your derivation of the Jacobian here.
+
+\subsection{Newton-Raphson and Jacobian Derivation}
+To solve the non-linear system at each time step, we require the Jacobian $J_t = \frac{\partial f(x_t)}{\partial x_t}$. 
+
 \begin{algorithm}
-\caption{Newton-Raphson for Circuit Simulation}
-\begin{algorithmic}[1]
-\STATE % TODO: Implement pseudo-code as per task 3.1.1b[cite: 177, 240].
+\caption{Newton-Raphson algorithm}
+\begin{algorithmic}[1] 
+    \Procedure{NewtonRaphson}{$\mathbf{A, b, x}, max\_iter, \epsilon$}
+    
+    \Statex \textbf{Input:} 
+    \Statex \hspace{0.5cm} $\mathbf{A}$: Square matrix (linear part of the system)
+    \Statex \hspace{0.5cm} $\mathbf{b}$: Right-hand side vector
+    \Statex \hspace{0.5cm} $\mathbf{x}$: Initial guess vector
+    \Statex \hspace{0.5cm} $max\_iter$: Maximum number of iterations
+    \Statex \hspace{0.5cm} $\epsilon$: Convergence tolerance
+    \Statex \textbf{Output:} 
+    \Statex \hspace{0.5cm} $\mathbf{x}$: Converged solution vector
+
+    \hspace{0.5cm}
+        
+        \State $iteration \leftarrow 0$ 
+        \While{$iteration < max\_iter$}
+            \State $\mathbf{F} \leftarrow \mathbf{A}\mathbf{x} + f\_vect(\mathbf{x}) - \mathbf{b}$
+            
+            \If{$\|\mathbf{F}\| < \epsilon$}
+                \State \textbf{break}
+            \EndIf
+            
+            \State $\mathbf{J}_{jacob} \leftarrow \mathbf{A} + get\_jac(\mathbf{x})$
+            \State $\Delta \mathbf{x} \leftarrow \text{solve}(\mathbf{J}_{jacob}, -\mathbf{F})$
+            
+            \State $\mathbf{x} \leftarrow \mathbf{x} + \Delta \mathbf{x}$
+            \State $iteration \leftarrow iteration + 1$
+        \EndWhile
+        \State \Return $\mathbf{x}$
+    \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
 \begin{figure}[h] 
     \centering 
     \includegraphics[width=0.5\textwidth]{image2.png} 
-    \caption{V3 with respect to time of the circuit with Rpred = 986.0115
-and Cpred = 1.53e-06 superposed with the true voltage of node V3 from}
+    \caption{Comparison between the predicted voltage $V_3(t)$ ($R_{pred} = 986.01\,\Omega$, $C_{pred} = 1.53\,\mu\text{F}$) and the true voltage measured at node $V_3$.}
     \label{fig:ma_photo} 
 \end{figure}
 
@@ -108,7 +140,7 @@ A core requirement is the derivation of sensitivities $\frac{\partial X}{\partia
 \begin{figure}[h] 
     \centering %
     \includegraphics[width=0.5\textwidth]{image.png} 
-    \caption{ Voltages of nodes V1, V2, V3, and current IE with respect to time for R = 2500 $\Omega$ and C = 3 $\mu$F }
+    \caption{Time evolution of node voltages $V_1$, $V_2$, $V_3$, and emitter current $I_E$ for $R = \qty{2500}{\ohm}$ and $C = \qty{3}{\micro\farad}$.}
 \end{figure}
 
 \section{Machine Learning Approach}
