@@ -16,6 +16,24 @@ This report details the estimation of unknown resistance ($R$) and capacitance (
 \section{Introduction}
 Estimating circuit parameters is a fundamental inverse problem[cite: 273]. We are tasked with identifying $R \in [1\Omega, 2.5k\Omega]$ and $C \in [0.1\mu F, 5\mu F]$ from noisy time-domain measurements of $V_1, V_2, V_3$, and $I_E$[cite: 11, 281]. This report covers the derivation of the circuit's sensitivity, the implementation of a numerical simulator, and a comparative analysis of data-driven models[cite: 173, 201].
 
+\section{Deriving the Jacobian of the non linear element}
+
+The non linear element is modeled by the function $f$ which is given by the following equation:
+$$f(\begin{bmatrix}V_1\\V_2\\V_3\\I_E\end{bmatrix}) = \begin{bmatrix}
+0 \\
+I_s(e^{\frac{V_2 - V_3}{V_t}} - 1) \\
+-I_s(e^{\frac{V_2 - V_3}{V_t}} - 1) \\
+0
+\end{bmatrix}$$
+Applying the principles of differentiation, we find that the derivative of $f$ with respect to the state vector $x$ is given by the Jacobian matrix $J$ which is defined as follows:
+$$J = \frac{\partial f}{\partial x} = \begin{bmatrix}
+0 & 0 & 0 & 0 \\
+0 & \frac{I_s}{V_t}e^{\frac{V_2 - V_3}{V_t}} & -\frac{I_s}{V_t}e^{\frac{V_2 - V_3}{V_t}} & 0 \\
+0 & -\frac{I_s}{V_t}e^{\frac{V_2 - V_3}{V_t}} & \frac{I_s}{V_t}e^{\frac{V_2 - V_3}{V_t}} & 0 \\
+0 & 0 & 0 & 0 
+\end{bmatrix}$$
+
+
 \section{Circuit Simulation and Numerical Analysis}
 \subsection{Modified Nodal Analysis (MNA)}
 The circuit dynamics are described by the compact MNA form[cite: 97]:
@@ -29,7 +47,7 @@ To solve the non-linear system at each time step, we require the Jacobian $J_t =
 \begin{algorithm}
 \caption{Newton-Raphson for Circuit Simulation}
 \begin{algorithmic}[1]
-% TODO: Implement pseudo-code as per task 3.1.1b[cite: 177, 240].
+\STATE % TODO: Implement pseudo-code as per task 3.1.1b[cite: 177, 240].
 \end{algorithmic}
 \end{algorithm}
 
@@ -43,7 +61,7 @@ A core requirement is the derivation of sensitivities $\frac{\partial X}{\partia
 \begin{algorithm}
 \caption{getSensitivities Function}
 \begin{algorithmic}[1]
-% TODO: Implement pseudo-code as per task 3.1.3b[cite: 182, 240].
+\STATE % TODO: Implement pseudo-code as per task 3.1.3b[cite: 182, 240].
 \end{algorithmic}
 \end{algorithm}
 
