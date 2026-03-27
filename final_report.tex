@@ -16,7 +16,7 @@ This report details the estimation of unknown resistance ($R$) and capacitance (
 \section{Introduction}
 Estimating circuit parameters is a fundamental inverse problem[cite: 273]. We are tasked with identifying $R \in [1\Omega, 2.5k\Omega]$ and $C \in [0.1\mu F, 5\mu F]$ from noisy time-domain measurements of $V_1, V_2, V_3$, and $I_E$[cite: 11, 281]. This report covers the derivation of the circuit's sensitivity, the implementation of a numerical simulator, and a comparative analysis of data-driven models[cite: 173, 201].
 
-\section{Deriving the Jacobian of the non linear element}
+\section{Deriving the Jacobian of the non linear element for algorithm 1}
 
 The non linear element is modeled by the function $f$ which is given by the following equation:
 $$f(\begin{bmatrix}V_1\\V_2\\V_3\\I_E\end{bmatrix}) = \begin{bmatrix}
@@ -33,6 +33,10 @@ $$J = \frac{\partial f}{\partial x} = \begin{bmatrix}
 0 & 0 & 0 & 0 
 \end{bmatrix}$$
 
+\section{Deriving the Jacobian of the sensitivities for algorithm 2}
+
+To derive the Jacobian of the sensitivities for algorithm 2, we first need to define the sensitivity functions with respect to the parameters $R$ and $C$. Let $S_R = \frac{\partial X}{\partial R}$ and $S_C = \frac{\partial X}{\partial C}$ represent the sensitivities of the state vector $X$ with respect to $R$ and $C$, respectively.
+The circuit's governing equation at each timestep looks like $(G + C/Δt + J) x = b$ where J is the Jacobian. Differentiating this system with respect to a parameter p gives $A(dx/dp) = -( dA/dp * x ) + (C/Δt) * (dx/dp)$.
 
 \section{Circuit Simulation and Numerical Analysis}
 \subsection{Modified Nodal Analysis (MNA)}
