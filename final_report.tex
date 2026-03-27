@@ -1,5 +1,5 @@
 \documentclass[journal,twocolumn]{IEEEtran}
-\usepackage{amsmath, amssymb, graphicx, algorithm, algorithmic, hyperref}
+\usepackage{amsmath, amssymb, graphicx, algorithm, algpseudocode, hyperref}
 
 \title{Data-Driven and Numerical Estimation of Circuit Parameters in a Half-Wave Rectifier}
 \author{Group 32: [Your Names Here]\\ Department of Electrical and Computer Engineering, McGill University}
@@ -36,7 +36,7 @@ $$J = \frac{\partial f}{\partial x} = \begin{bmatrix}
 \section{Deriving the Jacobian of the sensitivities for algorithm 2}
 
 To derive the Jacobian of the sensitivities for algorithm 2, we first need to define the sensitivity functions with respect to the parameters $R$ and $C$. Let $S_R = \frac{\partial X}{\partial R}$ and $S_C = \frac{\partial X}{\partial C}$ represent the sensitivities of the state vector $X$ with respect to $R$ and $C$, respectively.
-The circuit's governing equation at each timestep looks like $(G + C/Δt + J) x = b$ where J is the Jacobian. Differentiating this system with respect to a parameter p gives $A(dx/dp) = -( dA/dp * x ) + (C/Δt) * (dx/dp)$.
+The circuit's governing equation at each timestep looks like $(G + C/\Delta t + J) x = b$ where J is the Jacobian. Differentiating this system with respect to a parameter p gives $A(dx/dp) = -( dA/dp * x ) + (C/Δt) * (dx/dp)$. The code is the following.
 
 \section{Circuit Simulation and Numerical Analysis}
 \subsection{Modified Nodal Analysis (MNA)}
@@ -73,7 +73,35 @@ A core requirement is the derivation of sensitivities $\frac{\partial X}{\partia
 \begin{algorithm}
 \caption{getSensitivities Function}
 \begin{algorithmic}[1]
-\STATE % TODO: Implement pseudo-code as per task 3.1.3b[cite: 182, 240].
+
+ \Function{GetSensitivities}{$\mathbf{x}_{\text{pred}}, G, C, R, \delta t$}
+        \State $\mathbf{dxdR} \gets [\,]$
+        \State $\mathbf{dxdC} \gets [\,]$
+        \State $\frac{\partial G}{\partial R} \gets$ \Call{get\_dGdR}{$R$}
+        \State $\frac{\partial C}{\partial C} \gets$ \Call{get\_dCdC}{}
+
+        \For{$i = 0, 1, \dots, |\mathbf{x}_{\text{pred}}| - 1$}
+            \State $J \gets$ \Call{get\_jac}{$\mathbf{x}_{\text{pred}}[i]$}
+            \State $A \gets G + \dfrac{C}{\delta t} + J$
+
+            \If{$i = 0$}
+                \State $\mathbf{tmp}_R \gets -\dfrac{\partial G}{\partial R}\, \mathbf{x}_{\text{pred}}[i]$
+            \Else
+                \State $\mathbf{tmp}_R \gets -\dfrac{\partial G}{\partial R}\, \mathbf{x}_{\text{pred}}[i] + \dfrac{C}{\delta t}\, \mathbf{dxdR}[i-1]$
+            \EndIf
+            \State Append $A^{-1}\, \mathbf{tmp}_R$ to $\mathbf{dxdR}$
+
+            \If{$i = 0$}
+                \State $\mathbf{tmp}_C \gets -\dfrac{\partial C}{\partial C}{\delta t}\, \mathbf{x}_{\text{pred}}[i]$
+            \Else
+                \State $\mathbf{tmp}_C \gets -\dfrac{\partial C / \partial C}{\delta t}\!\left(\mathbf{x}_{\text{pred}}[i] - \mathbf{x}_{\text{pred}}[i-1]\right) + \dfrac{C}{\delta t}\,\mathbf{dxdC}[i-1]$
+            \EndIf
+            \State Append $A^{-1}\, \mathbf{tmp}_C$ to $\mathbf{dxdC}$
+        \EndFor
+
+        \State \Return $\mathbf{dxdR},\, \mathbf{dxdC}$
+    \EndFunction
+
 \end{algorithmic}
 \end{algorithm}
 
