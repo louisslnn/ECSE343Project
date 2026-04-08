@@ -1,17 +1,17 @@
-You need numpy and matplotlib to run the code.
-You may install these two libraries in the terminal by typing
+ECSE343 — Group 32: nonlinear circuit simulation, parameter estimation, and ML
 
-pip install numpy
-pip install matplotlib
+What’s here
+  group_32_circuit_simulator.py — MNA + Backward Euler, Newton–Raphson per step, sensitivities, Gauss–Newton parameter fit.
+  group_32_helper_functions.py — dataset generation (random R, C in project ranges), plotting, save/load pickle.
+  test.py — end-to-end demo: forward simulation, Gauss–Newton on measurements.csv, optional dataset build to data/dataset.pkl.
+  group_32_ML.ipynb — supervised models (linear/ridge, RF, SVR, MLP) vs Gauss–Newton comparison on the pickle dataset.
+  data/measurements.csv — T×4 matrix, columns [V1, V2, V3, IE] (one row per time sample).
 
-Once you have written all the functions for the project, you can run the circuit simulator by typing in the terminal:
+Setup
+  python3 -m venv .venv && source .venv/bin/activate   # recommended on macOS/Homebrew Python
+  pip install -r requirements.txt
 
-python test.py
+Run
+  python test.py
 
-You may also use any IDE of your choosing to make things easier.
-
-The columns of the measurements.csv file are organized as follows:
-
-[V_1, V_2, V_3, I_e]
-
-It is a T x 4 matrix, where each row corresponds to a snapshot of the voltages and currents at time 't'.
+Ensure data/measurements.csv exists (and data/ for dataset.pkl output) before running.
