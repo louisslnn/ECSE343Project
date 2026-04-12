@@ -131,14 +131,14 @@ class CircuitSimulator:
         # Iterative solver for non-linear systems
         it = 0
 
-        while it < max_iter:
-            F = A @ x + self.get_f_vect(x) - b
+        while it < max_iter:  
+            F = A @ x + self.get_f_vect(x) - b  # Residual of the non-linear system
 
             if np.linalg.norm(F) < epsilon:
                 break
 
-            jacob = A + self.get_jac(x)
-            delta_x = np.linalg.solve(jacob, -F)
+            jacob = A + self.get_jac(x) # Jacobian of the system for Newton-Raphson update
+            delta_x = np.linalg.solve(jacob, -F) # Solve for the update step
 
             x = x + delta_x
             it += 1
